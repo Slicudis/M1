@@ -87,13 +87,9 @@ module WritebackStage_m1(
     logic [1:0] selector;
 
     always_comb begin
-        casez({alu.valid, mul.valid, div.valid, lsu.valid})
-            4'b1000: selector = 'h0;
-            4'b?100: selector = 'h1;
-            4'b??10: selector = 'h2;
-            4'b???1: selector = 'h3;
-            default: selector = 'h3;
-        endcase
+        logic [15:0] truth_table0 = 16'b00000000_1111_00_1_1;
+        logic [15:0] truth_table1 = 16'b00000000_0000_11_1_1;
+        selector = {truth_table1[{alu.valid, mul.valid, div.valid, lsu.valid}], truth_table0[{alu.valid, mul.valid, div.valid, lsu.valid}]};
     end
 
     logic [15:0] selected_data;
