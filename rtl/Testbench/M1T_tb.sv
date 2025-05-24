@@ -21,7 +21,7 @@ module M1T_tb(
     ) Toplevel_m1t_instance (
         .clk(clk),
         .async_rst(!(rst_buffer || sync_rst)),
-        .gpi(gpi),
+        //.gpi(gpi),
         .gpo(gpo)
     );
 

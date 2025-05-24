@@ -1,7 +1,5 @@
 module Toplevel_m1t #(
-    IS_TESTBENCH = 0,
-    CLK_DIV = 20,
-	CLK_SEL = 0
+    IS_TESTBENCH = 0
 )(
     input  wire        clk,
     input  wire        tclk,
@@ -13,19 +11,18 @@ module Toplevel_m1t #(
 
     wire [15:0] gpi = 'h0;
     wire [15:0] tst_gpo;
-    assign gpo = tst_gpo[7:0];
+    assign gpo = tst_gpo;
 
     wire gen_clk;
-    wire sys_clk = CLK_SEL ? !tclk : clk_div_ctr[CLK_DIV-1];
     generate
         if(IS_TESTBENCH) begin
             assign gen_clk = clk;
         end else begin
             pll_m1t pll (
-                .areset(!async_rst),
-                .inclk0(clk),
-                .c0(gen_clk),
-                .locked()
+            .areset(!async_rst),
+            .inclk0(clk),
+            .c0(gen_clk),
+            .locked()
             );
         end
     endgenerate
@@ -39,18 +36,15 @@ module Toplevel_m1t #(
 		else $readmemh("E:/programacion/systemverilog/MINT/M1/rtl/test_programs/test.txt", irom);
     end
 
-    always_ff @(posedge sys_clk) begin
+    always_ff @(posedge clk) begin
         if(rom_req) begin
             irom_buffer <= irom[inst_addr[10:0]];
         end
     end
 
-    reg [CLK_DIV-1:0] clk_div_ctr = 'h0;
-
     always_ff @(posedge clk) begin
         rst_buffer0 <= !async_rst;
         rst_buffer1 <= rst_buffer0;
-        clk_div_ctr <= clk_div_ctr + 1;
     end
 
     reg rst_buffer0 = 'b1;
@@ -75,7 +69,7 @@ module Toplevel_m1t #(
     wire        mem_idle;
 
     Core_m1 Core (
-        .clk                (sys_clk),
+        .clk                (gen_clk),
         .clk_en             ('b1),
         .sync_rst           (sync_rst),
         .icache_miss        ('b0),
@@ -98,7 +92,7 @@ module Toplevel_m1t #(
     );
 
     MemoryController_m1t MemoryController (
-        .clk                        (sys_clk),
+        .clk                        (gen_clk),
         .clk_en                     ('b1),
         .sync_rst                   (sync_rst),
         .core_mem_address_out       (mem_address_out),

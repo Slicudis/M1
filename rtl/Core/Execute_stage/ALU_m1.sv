@@ -46,27 +46,9 @@ module ALU_m1(
 ///
     // * --- Shift ---
 
-    typedef struct packed{
-        logic [15:0] result;
-        logic [16:0] part_result;
-        logic [15:0] rev_result;
-        logic [15:0] data;
-        logic [15:0] rev_data;
-    } shifter_t;
-
-    shifter_t shifter;
-
-    assign shifter.result = operation[0] ? shifter.part_result[15:0] : shifter.rev_result;
-    assign shifter.part_result = $signed({(shifter.data[15] && operation[3]), shifter.data}) >> data_in2[3:0];
-    assign shifter.data = operation[0] ? shifter.rev_data : data_in1;
-
-    genvar i;
-    generate
-        for(i = 0; i < 16; i++) begin : Shifter_Reverse_bits
-            assign shifter.rev_result[i] = shifter.part_result[15-i];
-            assign shifter.rev_data[i] = data_in1[15-i];
-        end
-    endgenerate
+    wire [15:0] shr_res = data_in1 >> data_in2[3:0];
+    wire [15:0] asr_res = $signed(data_in1) >> data_in2[3:0];
+    wire [15:0] shl_res = data_in1 >> data_in2[3:0];
 
 ///
     // * --- Bit rotate ---
@@ -78,7 +60,7 @@ module ALU_m1(
     // * --- Bit scan ---
 
     typedef struct packed{
-        logic [15:0]  res;
+        logic [15:0] res;
         logic [15:0] rev_data;
         logic [15:0] data;
         logic [15:0] ihb;
@@ -90,6 +72,7 @@ module ALU_m1(
     assign bscan.data = operation[0] ? data_in1 : bscan.rev_data;
     assign bscan.ihb = bscan.data & -bscan.data;
 
+	 genvar i;
     generate
         wire [15:0] selected_ihb = operation[0] ? bscan.ihb : bscan.rev_ihb;
         wire [4:0] bitscan_vals [15:0];
@@ -138,9 +121,9 @@ module ALU_m1(
             4'h3:    int_selected_result0 = data_in1 | data_in2;     //IOR
             4'h4:    int_selected_result0 = data_in1 ^ data_in2;     //XOR
             4'h5:    int_selected_result0 = bit_manip.flp;           //BFL
-            4'h6:    int_selected_result0 = shifter.result;          //SHR
-            4'h7:    int_selected_result0 = shifter.result;          //SHL
-            4'h8:    int_selected_result0 = shifter.result;          //ASR
+            4'h6:    int_selected_result0 = shr_res;                 //SHR
+            4'h7:    int_selected_result0 = shl_res;                 //SHL
+            4'h8:    int_selected_result0 = asr_res;                 //ASR
             4'h9:    int_selected_result0 = rtl_res[31:16];          //RTL
             4'ha:    int_selected_result0 = rtr_res[15:0];           //RTR
             4'hb:    int_selected_result0 = bscan.res;               //BSF

@@ -1,1 +1,4 @@
 tmp/
+projects/quartus/db/
+projects/quartus/incremental_db/
+projects/quartus/output_files/

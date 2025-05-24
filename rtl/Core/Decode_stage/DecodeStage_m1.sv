@@ -1,6 +1,4 @@
-
 import Types_m1::*;
-
 module DecodeStage_m1 (
 
     input wire         clk,

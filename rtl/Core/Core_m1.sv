@@ -298,6 +298,6 @@ module Core_m1(
         .writeback_en   (writeback_en)
     );
 
-    assign icache_req = !(issue_out.pipeline_stall || wb_conflict);
+    assign icache_req = !(issue_out.pipeline_stall || wb_conflict) || sync_rst;
 
 endmodule : Core_m1

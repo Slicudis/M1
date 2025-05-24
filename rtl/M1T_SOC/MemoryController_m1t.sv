@@ -86,11 +86,11 @@ module MemoryController_m1t(
     assign core_mem_read_ack = en_buffer && !mode_buffer;
     assign core_mem_wb_dest_in = wb_dest_buffer;
 
-    wire [15:0]  selected_data = sel_buffer ? gpi_bank : {ram_buffer0, ram_buffer1};
+    wire [15:0]  selected_data = sel_buffer ? gpi_buffer : {ram_buffer0, ram_buffer1};
     logic [15:0] adjusted_data;
 
     always_comb begin
-        case(core_mem_read_fnc_type)
+        case(dtype_buffer)
             2'b00:   adjusted_data = {{8{selected_data[7]}}, selected_data[7:0]};
             2'b10:   adjusted_data = {8'h0, selected_data[7:0]};
             default: adjusted_data = selected_data;
