@@ -71,8 +71,8 @@ module ALU_m1(
 ///
     // * --- Bit rotate ---
 
-    wire [47:0] int_rotation = operation[0] ? ({data_in1, data_in1, data_in1} << data_in2[3:0]) : ({data_in1, data_in1, data_in1} >> data_in2[3:0]);
-    wire [15:0] rotation = int_rotation[31:16];
+    wire [31:0] rtr_res = {data_in1, data_in1} >> data_in2[3:0];
+    wire [31:0] rtl_res = {data_in1, data_in1} << data_in2[3:0];
 
 ///
     // * --- Bit scan ---
@@ -141,8 +141,8 @@ module ALU_m1(
             4'h6:    int_selected_result0 = shifter.result;          //SHR
             4'h7:    int_selected_result0 = shifter.result;          //SHL
             4'h8:    int_selected_result0 = shifter.result;          //ASR
-            4'h9:    int_selected_result0 = rotation;                //RTL
-            4'ha:    int_selected_result0 = rotation;                //RTR
+            4'h9:    int_selected_result0 = rtl_res[31:16];          //RTL
+            4'ha:    int_selected_result0 = rtr_res[15:0];           //RTR
             4'hb:    int_selected_result0 = bscan.res;               //BSF
             4'hc:    int_selected_result0 = bscan.res;               //BSB
             4'hd:    int_selected_result0 = bit_manip.set;           //BST

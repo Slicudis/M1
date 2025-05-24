@@ -33,7 +33,7 @@ module LSU_m1(
 
     output wire        mem_input_ready,
 
-    input  wire [15:0] mem_data_in,
+    input  wire [15:0] mem_data_in,       //big endian
     input  wire [3:0]  mem_wb_dest_in,
     input  wire        mem_read_ack,
     input  wire        mem_available,
@@ -124,7 +124,7 @@ module LSU_m1(
     always_ff @(posedge clk) begin : Stage3_ff
         if(sync_rst) begin
             lsq_head_buffer_valid <= 'b0;
-        end else if(clk_en) begin
+        end else if(clk_en && !wb_conflict_stall) begin
             lsq_head_buffer_valid <= mem_available && !lsq_empty;
             lsq_head_buffer <= lsq[lsq_head_ptr[2:0]];
         end

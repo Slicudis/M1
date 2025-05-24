@@ -34,7 +34,7 @@ module Core_m1(
 
     wire [14:0] fetch_data_out;
 
-    wire [15:0] adjusted_instruction_in = icache_miss ? 16'h0 : {instruction_in[15:8], instruction_in[7:0]};
+    wire [15:0] adjusted_instruction_in = icache_miss ? 16'h0 : {instruction_in[7:0], instruction_in[15:8]};
 
     typedef struct packed{
         logic [11:0] inst;

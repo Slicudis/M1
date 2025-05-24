@@ -45,7 +45,7 @@ module IssueStage_m1(
     wire rs1_forward_en = (wb_en && (wb_addr_in == inst.r.rs1) && |inst.r.rs1);
     wire rs2_forward_en = (wb_en && (wb_addr_in == inst.r.rs2) && |inst.r.rs2);
 
-    wire        rs1_busy = !rs1_forward_en && rs1_busy_in && (uop_in.rs1_dependency || uop_in.regfile_write);
+    wire        rs1_busy = !rs1_forward_en && rs1_busy_in && (uop_in.rs1_dependency || uop_in.regfile_write && |inst.r.rs1);
     wire        rs2_busy = !rs2_forward_en && rs2_busy_in && uop_in.rs2_dependency;
     wire [15:0] rs1_data = rs1_forward_en ? wb_data_in : rs1_data_in;
     wire [15:0] rs2_data = rs2_forward_en ? wb_data_in : rs2_data_in;

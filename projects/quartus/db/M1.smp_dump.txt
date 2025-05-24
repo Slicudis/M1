@@ -1,0 +1,6 @@
+
+State Machine - |Toplevel_m1t|Core_m1:Core|Divider_m1:Divider|state
+Name state.IDLE state.EXECUTE state.SIGN_ADJ 
+state.IDLE 0 0 0 
+state.SIGN_ADJ 1 0 1 
+state.EXECUTE 1 1 0 
